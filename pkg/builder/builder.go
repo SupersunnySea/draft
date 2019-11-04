@@ -362,10 +362,10 @@ func (b *Builder) Up(ctx context.Context, bctx *Context) <-chan *Summary {
 			log.Printf("error while pushing: %v\n", err)
 			return
 		}
-		if err := b.release(ctx, app, ch); err != nil {
-			log.Printf("error while releasing: %v\n", err)
-			return
-		}
+		// if err := b.release(ctx, app, ch); err != nil {
+		// 	log.Printf("error while releasing: %v\n", err)
+		// 	return
+		// }
 	}()
 	go func() {
 		wg.Wait()

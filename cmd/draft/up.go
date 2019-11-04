@@ -19,7 +19,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"golang.org/x/net/context"
-	"k8s.io/client-go/rest"
 
 	"github.com/Azure/draft/pkg/azure/containerregistry"
 	"github.com/Azure/draft/pkg/azure/iam"
@@ -145,10 +144,10 @@ func newUpCmd(out io.Writer) *cobra.Command {
 
 func (u *upCmd) run(environment string) (err error) {
 	var (
-		buildctx   *builder.Context
-		kubeConfig *rest.Config
-		ctx        = context.Background()
-		bldr       = builder.New()
+		buildctx *builder.Context
+		// kubeConfig *rest.Config
+		ctx  = context.Background()
+		bldr = builder.New()
 	)
 	bldr.LogsDir = u.home.Logs()
 
@@ -232,14 +231,16 @@ func (u *upCmd) run(environment string) (err error) {
 	bldr.ContainerBuilder = cb
 
 	// setup kube
-	bldr.Kube, kubeConfig, err = getKubeClient(kubeContext)
+	// bldr.Kube, kubeConfig, err = getKubeClient(kubeContext)
+	bldr.Kube, _, err = getKubeClient(kubeContext)
 	if err != nil {
 		return fmt.Errorf("Could not get a kube client: %s", err)
 	}
-	bldr.Helm, err = setupHelm(bldr.Kube, kubeConfig, tillerNamespace)
-	if err != nil {
-		return fmt.Errorf("Could not get a helm client: %s", err)
-	}
+
+	// bldr.Helm, err = setupHelm(bldr.Kube, kubeConfig, tillerNamespace)
+	// if err != nil {
+	// 	return fmt.Errorf("Could not get a helm client: %s", err)
+	// }
 
 	// setup the storage engine
 	bldr.Storage = configmap.NewConfigMaps(bldr.Kube.CoreV1().ConfigMaps(tillerNamespace))
